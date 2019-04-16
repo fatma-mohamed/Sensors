@@ -5,7 +5,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import app.sensors.modules.VerticalDisplacementModule
 
-class VerticalDisplacementPresenter : ModulePresenter{
+class VerticalDisplacementPresenter : Presenter{
+    override var started: Boolean
     var details_vd: TextView;
     var mHandler: Handler
     var activity: AppCompatActivity
@@ -13,6 +14,7 @@ class VerticalDisplacementPresenter : ModulePresenter{
     lateinit var vdRunnable: Runnable
 
     constructor(details_vd: TextView, activity: AppCompatActivity) {
+        started = false
         this.details_vd = details_vd
         this.activity = activity
         verticalDisplacementModule = VerticalDisplacementModule(activity)
@@ -20,6 +22,7 @@ class VerticalDisplacementPresenter : ModulePresenter{
     }
 
     override fun start() {
+        started = true
         vdRunnable = object : Runnable {
             override fun run() {
                 details_vd.setText(verticalDisplacementModule.VP_s64_GetCurrentVerticalPosition().toString())
@@ -33,6 +36,7 @@ class VerticalDisplacementPresenter : ModulePresenter{
     }
 
     override fun stop() {
+        started = false
         mHandler.removeCallbacks(vdRunnable)
     }
 }

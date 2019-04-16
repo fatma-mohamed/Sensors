@@ -2,4 +2,22 @@
     <string name="app_name">Sensors</string>
     <string name="permission_denied_explanation">Sensors</string>
     <string name="settings">Sensors</string>
+
+    <string name="vertical_displacement">Vertical Displacement</string>
+
+    <string name="current_time_date">Current Time and Date</string>
+    <string name="current_time">Current Time</string>
+    <string name="current_date">Current Date</string>
+
+    <string name="temperature">Temperature</string>
+    <string name="temperature_value">%1$f\u00B0%2$s</string>
+    <string name="temperature_sensor_found">Temperature Sensor exists.</string>
+    <string name="temperature_sensor_not_found">No Temperature Sensor. Using OpenWeather API.</string>
+
+    <string name="location">Location</string>
+    <string name="location_value">Lat:%1$f, Lng:%2$f</string>
+    <string name="location_undefined">Couldn\'t get location\'s address for temperature module.</string>
+
+    <string name="loading">Loading&#8230;</string>
+    <string name="no_internet_connection">No internet connection.</string>
 </resources>

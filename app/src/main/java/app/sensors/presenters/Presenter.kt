@@ -1,6 +1,8 @@
 package app.sensors.presenters
 
-interface ModulePresenter {
+interface Presenter {
+    var started: Boolean
+
     fun start() {}
     fun stop() {}
 }

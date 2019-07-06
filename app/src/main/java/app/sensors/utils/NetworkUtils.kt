@@ -6,6 +6,9 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 
+/**
+ * Listen to network changes
+ */
 class NetworkUtils : BroadcastReceiver() {
 
     override fun onReceive(context: Context, arg1: Intent) {

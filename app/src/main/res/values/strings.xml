@@ -21,6 +21,13 @@
     <string name="location_value">Lat:%1$f, Lng:%2$f</string>
     <string name="location_undefined">Couldn\'t get location\'s address for temperature module.</string>
 
+
+    <string name="speed">Speed</string>
+    <string name="speed_km_hr">%1$f Km/Hr</string>
+    <string name="speed_mile_hr">%1$f Mile/Hr</string>
+    <string name="speed_meter_sec">%1$f m/s</string>
+    <string name="speed_acceleration">%1$f m/s</string>
+
     <string name="loading">Loading&#8230;</string>
     <string name="no_internet_connection">No internet connection.</string>
 </resources>

@@ -8,27 +8,28 @@ import app.sensors.R
 import app.sensors.listeners.LocationListener
 import app.sensors.modules.LocationModule
 
-class LocationPresenter(var details_loc: TextView, var activity: AppCompatActivity) : Presenter, LocationListener{
+class LocationPresenter(var details_loc: TextView, var activity: AppCompatActivity, private var listeners: ArrayList<LocationListener>) : Presenter{
     override var started: Boolean = false
     var mHandler: Handler
     var locationModule: LocationModule
-    var location: Location?
     lateinit var vdRunnable: Runnable
 
     init {
-        this.location = null
-        locationModule = LocationModule(activity, this)
+        locationModule = LocationModule(activity, listeners)
         mHandler = Handler()
     }
 
+    /**
+     * Start task running every second to update location
+     */
     override fun start() {
         started = true
         vdRunnable = object : Runnable {
             override fun run() {
-                if(location != null) {
+                if(locationModule.LOC_enu_GetCurrentLocation() != null) {
                     details_loc.setText(activity.getString(R.string.location_value,
-                        location?.latitude,
-                        location?.longitude))
+                        locationModule.LOC_enu_GetCurrentLocation()?.latitude,
+                        locationModule.LOC_enu_GetCurrentLocation()?.longitude))
                 } else {
                     details_loc.setText(R.string.loading)
                 }
@@ -41,10 +42,9 @@ class LocationPresenter(var details_loc: TextView, var activity: AppCompatActivi
         mHandler.post(vdRunnable)
     }
 
-    override fun onLocationChange(location: Location) {
-        this.location = location
-    }
-
+    /**
+     * Stop runnable task
+     */
     override fun stop() {
         started = false
         mHandler.removeCallbacks(vdRunnable)

@@ -21,6 +21,9 @@ class VerticalDisplacementPresenter : Presenter{
         mHandler = Handler()
     }
 
+    /**
+     * Start task running every second to update location
+     */
     override fun start() {
         started = true
         vdRunnable = object : Runnable {
@@ -29,12 +32,12 @@ class VerticalDisplacementPresenter : Presenter{
                 mHandler.postDelayed(this, 1000)
             }
         }
-
-        verticalDisplacementModule.locationUpdateState = true
-        verticalDisplacementModule.startLocationUpdates()
         mHandler.post(vdRunnable)
     }
 
+    /**
+     * Stop runnable task
+     */
     override fun stop() {
         started = false
         mHandler.removeCallbacks(vdRunnable)

@@ -12,31 +12,34 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 
 
-class LocationModule(private var activity: Activity, var locationListener: LocationListener?) {
-    private var fusedLocationClient: FusedLocationProviderClient
+class LocationModule(private var activity: Activity, private var listeners: ArrayList<LocationListener>) {
+    private val TAG = "LocationModule"
+    private var fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
     private var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     var locationUpdateState = false
     val REQUEST_CHECK_SETTINGS = 2
-    val LOCATION_PERMISSION_REQUEST_CODE = 1
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     lateinit var location: Location
-    lateinit var currentCity: String
-    lateinit var currentCountryCode: String
 
     init {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult) {
                 super.onLocationResult(p0)
-                Log.d("LOC", "Location updated: " + p0.lastLocation.altitude.toString())
+                Log.d(TAG, "Location updated: " + p0.lastLocation.altitude.toString())
                 location = p0.lastLocation
-                locationListener?.onLocationChange(location)
+                for (listener in listeners) {
+                    listener.onLocationChange(location)
+                }
             }
         }
         createLocationRequest()
     }
 
+    /**
+     * Check if location permission is granted
+     */
     private fun checkLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(activity,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -52,6 +55,9 @@ class LocationModule(private var activity: Activity, var locationListener: Locat
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null /* Looper */)
     }
 
+    /**
+     * Start listening for location changes
+     */
     private fun createLocationRequest() {
         locationRequest = LocationRequest()
         locationRequest.interval = 10000
@@ -87,8 +93,15 @@ class LocationModule(private var activity: Activity, var locationListener: Locat
     }
 
 
-    fun LOC_enu_GetCurrentLocation(): Location {
-        return location
+    /**
+     * Returns Location if exists, null otherwise
+     * @return location
+     */
+    fun LOC_enu_GetCurrentLocation(): Location? {
+        if(::location.isInitialized)
+            return location
+        else
+            return null
     }
 
 }

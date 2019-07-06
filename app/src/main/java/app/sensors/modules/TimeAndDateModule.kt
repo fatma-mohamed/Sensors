@@ -6,26 +6,36 @@ import java.text.SimpleDateFormat
 
 class TimeAndDateModule {
 
-    companion object {
-        fun TND_str_GetCurrentTime(): String? {
-            val calendar = Calendar.getInstance().time
+    /**
+     * Returns current time in seconds
+     * @return time in String
+     */
+    fun TND_str_GetCurrentTime(): String? {
+        val calendar = Calendar.getInstance().time
 
-            val df = SimpleDateFormat("HH:mm:ss")
-            return df.format(calendar)
-        }
+        val df = SimpleDateFormat("HH:mm:ss")
+        return df.format(calendar)
+    }
 
-        fun TND_str_GetCurrentDate(): String? {
-            val calendar = Calendar.getInstance().time
+    /**
+     * Returns current date
+     * @return date in String
+     */
+    fun TND_str_GetCurrentDate(): String? {
+        val calendar = Calendar.getInstance().time
 
-            val df = SimpleDateFormat("yyyy-MM-dd")
-            return df.format(calendar)
-        }
+        val df = SimpleDateFormat("yyyy-MM-dd")
+        return df.format(calendar)
+    }
 
-        fun TND_str_GetCurrentTimeAndDate(): String? {
-            val calendar = Calendar.getInstance().time
+    /**
+     * Returns current date and time in Gregorian format
+     * @return date & time in String
+     */
+    fun TND_str_GetCurrentTimeAndDate(): String? {
+        val calendar = Calendar.getInstance().time
 
-            val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            return df.format(calendar)
-        }
+        val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        return df.format(calendar)
     }
 }

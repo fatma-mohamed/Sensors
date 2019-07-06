@@ -35,7 +35,9 @@ class TemperaturePresenter : Presenter {
         this.activity = activity
     }
 
-
+    /**
+     * Start task running every second to update location
+     */
     override fun start() {
         started = true
         temperatureRunnable = object : Runnable {
@@ -68,6 +70,9 @@ class TemperaturePresenter : Presenter {
         mHandler.post(temperatureRunnable)
     }
 
+    /**
+     * Stop runnable task
+     */
     override fun stop() {
         started = false
         mHandler.removeCallbacks(temperatureRunnable)

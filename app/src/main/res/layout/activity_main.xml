@@ -98,55 +98,55 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-            android:id="@+id/card_temperature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_time_date"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="5dp" app:cardBackgroundColor="@color/cardview_light_background"
-            android:hapticFeedbackEnabled="false" android:background="@android:color/transparent">
+        <androidx.cardview.widget.CardView
+                android:id="@+id/card_temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_time_date"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="5dp" app:cardBackgroundColor="@color/cardview_light_background"
+                android:hapticFeedbackEnabled="false" android:background="@android:color/transparent">
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:padding="8dp"
-                      android:orientation="vertical">
-            <TextView
-                    android:text="@string/temperature"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/title_temp" android:textStyle="bold"
-                    android:textSize="18sp" android:typeface="monospace" android:gravity="center"
-                    android:layout_marginBottom="8dp"
-            />
             <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="3">
+                          android:padding="8dp"
+                          android:orientation="vertical">
                 <TextView
-                        android:text="@string/loading"
+                        android:text="@string/temperature"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" android:id="@+id/temp_fahrenhit"
-                        android:typeface="monospace" android:gravity="center"
+                        android:layout_height="wrap_content" android:id="@+id/title_temp" android:textStyle="bold"
+                        android:textSize="18sp" android:typeface="monospace" android:gravity="center"
+                        android:layout_marginBottom="8dp"
                 />
-                <TextView
-                        android:text="@string/loading"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" android:id="@+id/temp_celsius"
-                        android:typeface="monospace" android:gravity="center"
-                />
-                <TextView
-                        android:text="@string/loading"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" android:id="@+id/temp_kelvin"
-                        android:typeface="monospace" android:gravity="center"
-                />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                              android:orientation="vertical"
+                              android:weightSum="3">
+                    <TextView
+                            android:text="@string/loading"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" android:id="@+id/temp_fahrenhit"
+                            android:typeface="monospace" android:gravity="center"
+                    />
+                    <TextView
+                            android:text="@string/loading"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" android:id="@+id/temp_celsius"
+                            android:typeface="monospace" android:gravity="center"
+                    />
+                    <TextView
+                            android:text="@string/loading"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" android:id="@+id/temp_kelvin"
+                            android:typeface="monospace" android:gravity="center"
+                    />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
             android:id="@+id/card_location"

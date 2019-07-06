@@ -6,71 +6,83 @@ import android.os.Handler
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import app.sensors.R
-import app.sensors.modules.LocationModule
-import app.sensors.modules.TemperatureModule
+import app.sensors.modules.SpeedModule
 
 class SpeedPresenter : Presenter {
-    override var started: Boolean
-    var temp_celsius: TextView;
-    var temp_fahrenhit: TextView;
-    var temp_kelvin: TextView;
+    override var started: Boolean = false
+    var speed_km_hr: TextView;
+    var speed_mile_hr: TextView;
+    var speed_meter_sec: TextView;
+    var speed_acceleration: TextView;
     var activity: AppCompatActivity
     var mHandler: Handler
-    var temperatureModule: TemperatureModule
-    lateinit var temperatureRunnable: Runnable
+    var speedModule: SpeedModule
+    lateinit var speedRunnable: Runnable
 
     constructor(
-        temp_celsius: TextView,
-        temp_fahrenheit: TextView,
-        temp_kelvin: TextView,
+        speed_km_hr: TextView,
+        speed_mile_hr: TextView,
+        speed_meter_sec: TextView,
+        speed_acceleration: TextView,
         sensorManager: SensorManager,
         activity: AppCompatActivity
     ) {
-        started = false
-        this.temp_celsius = temp_celsius
-        this.temp_fahrenhit = temp_fahrenheit
-        this.temp_kelvin = temp_kelvin
-        this.temperatureModule = TemperatureModule(sensorManager, activity as SensorEventListener)
-        this.mHandler = Handler()
+        this.speed_km_hr = speed_km_hr
+        this.speed_mile_hr = speed_mile_hr
+        this.speed_meter_sec = speed_meter_sec
+        this.speed_acceleration = speed_acceleration
         this.activity = activity
+        speedModule = SpeedModule(sensorManager, activity as SensorEventListener)
+        mHandler = Handler()
     }
 
-
+    /**
+     * Start task running every second to update location
+     */
     override fun start() {
         started = true
-        temperatureRunnable = object : Runnable {
+        speedRunnable = object : Runnable {
             override fun run() {
-                if(temperatureModule.TMP_u32_GetCurrentTempInCelsius() != null) {
-                    temp_celsius.setText(activity.getString(R.string.temperature_value,
-                        temperatureModule.TMP_u32_GetCurrentTempInCelsius(), "C"))
+                if(speedModule.ACC_u32_GetCurrentSpeedInKmPerHour() != null) {
+                    speed_km_hr.setText(activity.getString(R.string.speed_km_hr,
+                        speedModule.ACC_u32_GetCurrentSpeedInKmPerHour()))
                 } else {
-                    temp_celsius.setText(R.string.loading)
+                    speed_km_hr.setText(R.string.loading)
                 }
 
-                if(temperatureModule.TMP_u32_GetCurrentTempInKelvin() != null) {
-                    temp_kelvin.setText(activity.getString(R.string.temperature_value,
-                        temperatureModule.TMP_u32_GetCurrentTempInKelvin(), "K"))
+                if(speedModule.ACC_u32_GetCurrentSpeedInMilePerHour() != null) {
+                    speed_mile_hr.setText(activity.getString(R.string.speed_mile_hr,
+                        speedModule.ACC_u32_GetCurrentSpeedInMilePerHour()))
                 } else {
-                    temp_kelvin.setText(R.string.loading)
+                    speed_mile_hr.setText(R.string.loading)
                 }
 
-                if(temperatureModule.TMP_u32_GetCurrentTempInFahrenheit() != null) {
-                    temp_fahrenhit.setText(activity.getString(R.string.temperature_value,
-                        temperatureModule.TMP_u32_GetCurrentTempInFahrenheit(), "F"))
+                if(speedModule.ACC_u32_GetCurrentSpeedInMeterPerSec() != null) {
+                    speed_meter_sec.setText(activity.getString(R.string.speed_meter_sec,
+                        speedModule.ACC_u32_GetCurrentSpeedInMeterPerSec()))
                 } else {
-                    temp_fahrenhit.setText(R.string.loading)
+                    speed_meter_sec.setText(R.string.loading)
+                }
+
+                if(speedModule.ACC_u32_GetCurrentAcceleration() != null && speedModule.ACC_u32_GetCurrentAcceleration() != Float.NaN) {
+                    speed_acceleration.setText(activity.getString(R.string.speed_acceleration,
+                        speedModule.ACC_u32_GetCurrentAcceleration()))
+                } else {
+                    speed_acceleration.setText(R.string.loading)
                 }
 
                 mHandler.postDelayed(this, 1000)
             }
         }
 
-        mHandler.post(temperatureRunnable)
+        mHandler.post(speedRunnable)
     }
 
+    /**
+     * Stop runnable task
+     */
     override fun stop() {
         started = false
-        mHandler.removeCallbacks(temperatureRunnable)
-        temperatureModule.unregister()
+        mHandler.removeCallbacks(speedRunnable)
     }
 }

@@ -3,112 +3,125 @@ package app.sensors.modules
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.hardware.SensorEventListener
-import android.location.Geocoder
 import android.location.Location
-import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
-import app.sensors.R
 import app.sensors.listeners.LocationListener
-import app.sensors.models.Constants
-import app.sensors.services.WeatherService
-import app.sensors.utils.NetworkUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 
 class SpeedModule: LocationListener {
+    private val TAG = "SpeedModule"
     var sensorManager: SensorManager
     var activity: SensorEventListener
-    var locationModule: LocationModule?
-    var temperature: Float?
     var sensorExists = false;
-
-    val weatherServe by lazy {
-        WeatherService.create()
-    }
-    var disposable: Disposable? = null
+    var acceleration: Float?
+    var lastSpeed: Float?
+    var lastTime: Long?
+    var gravity: Float = 0f
+    var speed: Float?
 
     constructor(sensorManager: SensorManager, activity: SensorEventListener) {
-        this.sensorManager = sensorManager;
         this.activity = activity
-        this.temperature = null
+        this.sensorManager = sensorManager
+        this.acceleration = null
+        this.speed = null
+        this.lastSpeed = null
+        this.lastTime = null
 
-        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
-
+        // Check if acceleration sensor exists
+        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
         if (sensor != null) {
-            sensorExists = true
+            sensorExists = true;
             sensorManager.registerListener(activity, sensor, SensorManager.SENSOR_DELAY_FASTEST)
-            Toast.makeText(activity as AppCompatActivity, R.string.temperature_sensor_found, LENGTH_SHORT).show()
-            this.locationModule = null
+            Toast.makeText(activity as AppCompatActivity, app.sensors.R.string.accelerator_sensor_found, LENGTH_SHORT).show()
         } else {
-            Toast.makeText(activity as AppCompatActivity, R.string.temperature_sensor_not_found, LENGTH_SHORT).show()
-            this.locationModule = LocationModule(activity as AppCompatActivity, this)
-            this.locationModule?.locationUpdateState = true
-            this.locationModule?.startLocationUpdates()
+            Toast.makeText(activity as AppCompatActivity, app.sensors.R.string.accelerator_sensor_not_found, LENGTH_SHORT).show()
         }
     }
 
+    /**
+     * If acceleration sensor exits, acceleration is calculated from MainActivity, else
+     * it's calculated from speed over time
+     * @param Location
+     */
     override fun onLocationChange(location: Location) {
-        val gcd = Geocoder(activity as AppCompatActivity, Locale.getDefault())
-        val addresses = gcd.getFromLocation(location.latitude, location.longitude, 1)
-        if (addresses.size > 0) {
-            var currentCity = addresses[0].adminArea
-            if(currentCity.contains(' ')) {
-                currentCity = currentCity.split(' ')[0]
-            }
-            val currentCountryCode = addresses[0].countryCode
-            disposable =  weatherServe.getWeatherByCityName(currentCity
-                    +","+currentCountryCode, Constants.WEATHER_API_KEY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { result ->
-                        temperature = convertKelvinToCelsius(result.main.temp)
-                        Log.d("TEMP", temperature.toString())
-                    },
-                    { error ->
-                        Log.e("TemperatureModule", error.message)
-
-                    })
+        if(sensorExists) {
+            speed = location.speed
         } else {
-            Toast.makeText(activity as AppCompatActivity, R.string.location_undefined, LENGTH_SHORT).show()
+            if(lastSpeed != null && lastTime != null) {
+                val timeElapsed = (System.currentTimeMillis() - lastTime!!) / 1000
+                speed = location.speed
+                val speedDelta = speed!! - lastSpeed!!
+                acceleration = speedDelta/timeElapsed
+            }
+            lastSpeed = location.speed
+            lastTime = System.currentTimeMillis()
         }
     }
 
-    fun unregister() {
-        sensorManager.unregisterListener(activity);
-        disposable?.dispose()
-    }
 
-
-    fun TMP_u32_GetCurrentTempInFahrenheit(): Float? {
-        if(temperature != null)
-            return convertCelsiusToFahrenheit(temperature)
-        else
-            return null
-    }
-
-    fun TMP_u32_GetCurrentTempInCelsius(): Float? {
-        if(temperature != null)
-            return temperature
-        else
-            return null
-    }
-
-    fun TMP_u32_GetCurrentTempInKelvin(): Float? {
-        if(temperature != null)
-            return convertCelsiusToKelvin(temperature)
+    /**
+     * Returns speed in kilometers per hour
+     * @return speed in Float
+     */
+    fun ACC_u32_GetCurrentSpeedInKmPerHour(): Float? {
+        if(speed != null)
+            return convertToKmPerHour(speed)
         else
             return null
     }
 
 
-    fun convertCelsiusToFahrenheit(temp: Float?) = (9/5f * temp!!) + 32
-    fun convertCelsiusToKelvin(temp: Float?) = temp!! + 273.15f
-    fun convertKelvinToCelsius(temp: Float?) = temp!! - 273.15f
+    /**
+     * Returns speed in miles per hour
+     * @return speed in Float
+     */
+    fun ACC_u32_GetCurrentSpeedInMilePerHour(): Float? {
+        if(speed != null)
+            return convertToMilePerHour(speed)
+        else
+            return null
+    }
+
+
+    /**
+     * Returns speed in meters per hour
+     * @return speed in Float
+     */
+    fun ACC_u32_GetCurrentSpeedInMeterPerSec(): Float? {
+        if(speed != null)
+            return speed
+        else
+            return null
+    }
+
+
+    /**
+     * Returns acceleration in m/s2
+     * @return acceleration in Float
+     */
+    fun ACC_u32_GetCurrentAcceleration(): Float? {
+        if(acceleration != null)
+            return acceleration
+        else
+            return null
+    }
+
+
+    /**
+     * Converts speed from m/hr to km/hr
+     * @param speed in Float
+     * @return speed in Float
+     */
+    fun convertToKmPerHour(speed: Float?) = speed?.times(3.6f)
+
+    /**
+     * Converts speed from m/hr to mile/hr
+     * @param speed in Float
+     * @return speed in Float
+     */
+    fun convertToMilePerHour(speed: Float?) = speed?.times(2.237f)
+
 
 }

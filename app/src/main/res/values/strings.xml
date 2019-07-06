@@ -14,6 +14,9 @@
     <string name="temperature_sensor_found">Temperature Sensor exists.</string>
     <string name="temperature_sensor_not_found">No Temperature Sensor. Using OpenWeather API.</string>
 
+    <string name="accelerator_sensor_not_found">No Accelerator Sensor.</string>
+    <string name="accelerator_sensor_found">Accelerator Sensor exists.</string>
+
     <string name="location">Location</string>
     <string name="location_value">Lat:%1$f, Lng:%2$f</string>
     <string name="location_undefined">Couldn\'t get location\'s address for temperature module.</string>
